@@ -1,0 +1,30 @@
+// Arduino Code for Water Flow Sensor
+int flowSensorPin = 2;  // Flow sensor connected to digital pin 2
+volatile int pulseCount = 0;
+float flowRate;
+unsigned long lastTime = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(flowSensorPin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(flowSensorPin), countPulse, RISING);
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+  
+  if (currentTime - lastTime >= 1000) {
+    flowRate = pulseCount;  // Flow rate in pulses per second
+    pulseCount = 0;
+    
+    // Send flow rate to the backend (simulated via Serial)
+    Serial.print("Flow Rate: ");
+    Serial.println(flowRate);
+    
+    lastTime = currentTime;
+  }
+}
+
+void countPulse() {
+  pulseCount++;
+}
