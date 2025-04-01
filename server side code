@@ -1,0 +1,23 @@
+from flask import Flask, jsonify, request
+import random  # For simulating water flow data
+
+app = Flask(__name__)
+
+# Simulating IoT Sensor Data
+def get_water_flow():
+    return random.randint(10, 100)  # Simulated flow rate (liters per minute)
+
+@app.route('/api/water-flow', methods=['GET'])
+def water_flow():
+    flow = get_water_flow()
+    return jsonify({'flow_rate': flow})
+
+@app.route('/api/water-alert', methods=['POST'])
+def water_alert():
+    flow_rate = request.json.get('flow_rate')
+    if flow_rate > 80:
+        return jsonify({'alert': 'High water usage detected! Reduce consumption.'}), 400
+    return jsonify({'status': 'Water usage normal.'})
+
+if __name__ == '__main__':
+    app.run(debug=True)
